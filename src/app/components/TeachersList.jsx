@@ -59,6 +59,24 @@ export default function TeachersList({ teachers }) {
         return Object.entries(map);
     }, [teachers]);
 
+    const allDepartments = useMemo(() => {
+        const map = {};
+
+        teachers.forEach(teacher => {
+            let departments = teacher.department_name;
+
+            if (!Array.isArray(departments)) {
+            departments = String(departments).split(",").map(s => s.trim());
+            }
+
+            departments.forEach(dept => {
+            map[dept] = (map[dept] || 0) + 1;
+            });
+        });
+
+        return Object.entries(map);
+    }, [teachers]);
+
 
     const filteredTeachers = useMemo(() => {
         let result = teachers;
@@ -191,52 +209,6 @@ export default function TeachersList({ teachers }) {
                             </svg>
                             </summary>
                             <div className="space-y-2 p-3 text-sm text-gray-600 max-h-[20vh] overflow-auto">
-                            
-                                {/* Get count by subject */}
-                                {/* {(() => {
-                                    const subjectCounts = filteredTeachers.reduce((acc, teacher) => {
-                                        let subjects = teacher.subjects;
-
-                                        if (!Array.isArray(subjects)) {
-                                            subjects = String(subjects).split(',').map(s => s.trim());
-                                        }
-
-                                        subjects.forEach(subj => {
-                                            acc[subj] = (acc[subj] || 0) + 1;
-                                        });
-
-                                        return acc;
-                                    }, {});
-
-                                    return Object.entries(subjectCounts).map(([subjectName, count]) => (
-                                        <div key={subjectName}
-                                             className="flex justify-between"
-                                             onClick={() => {
-                                                setSelectedSubject(subjectName); 
-                                                filterTeacher({ subject: subjectName });
-                                                }}>
-                                            <div className="flex justify-content-center items-center">
-                                                <input
-                                                    id={subjectName}
-                                                    type="radio"
-                                                    className="accent-pink-500 h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500 hover:cursor-pointer"
-                                                    checked={selectedSubject === subjectName}  // controlled component
-                                                    onChange={() => null} // required in React but not used because click is on wrapper
-                                                />
-                                                <label
-                                                    htmlFor={subjectName}
-                                                    className="ml-3 text-gray-700 flex items-center hover:cursor-pointer"
-                                                >
-                                                    {subjectName}
-                                                </label>
-                                            </div>
-
-                                            <span className="inline-flex justify-center items-center w-5 h-5 text-xs font-semibold rounded-full text-primary-800 bg-primary-100 dark:bg-primary-200 dark:text-primary-800 hover:cursor-pointer">
-                                                {count}
-                                            </span>
-                                        </div>
-                                    ));
-                                })()} */}
                                 {allSubjects.map(([subjectName, count]) => (
                                     <div key={subjectName}
                                             className="flex justify-between"
@@ -279,48 +251,32 @@ export default function TeachersList({ teachers }) {
                             </svg>
                             </summary>
                             <div className="space-y-2 p-3 text-sm text-gray-600">
-                            
-                                {/* Get count by department */}
-                                {(() => {
-                                    const departmentCounts = filteredTeachers.reduce((acc, teacher) => {
-
-                                    const dept = teacher.department_name || 'Sin Departamento';
-                                
-                                    acc[dept] = (acc[dept] || 0) + 1;
-                                    return acc;
-                            }, {});
-
-                                    return Object.entries(departmentCounts).map(([departmentName, count]) => (
-                                        <div 
-                                            key={departmentName}
+                                {allDepartments.map(([departmentName, count]) => (
+                                    <div key={departmentName}
                                             className="flex justify-between"
-                                            onClick={() => {
-                                                setSelectedDepartment(departmentName); 
-                                                // filterTeacher({ department: departmentName }); 
-                                            }}
-                                        >
-                                            <div className="flex justify-content-center items-center">
-                                                <input
-                                                    id={departmentName}
-                                                    type="radio"
-                                                    className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500 hover:cursor-pointer"
-                                                    checked={selectedDepartment === departmentName}
-                                                    onChange={() => null} 
-                                                />
-                                                <label
-                                                    htmlFor={departmentName}
-                                                    className="ml-3 text-gray-700 flex items-center hover:cursor-pointer"
-                                                >
-                                                    {departmentName}
-                                                </label>
-                                            </div>
+                                            onClick={() => setSelectedDepartment(departmentName)}>
 
-                                            <span className="inline-flex justify-center items-center w-5 h-5 text-xs font-semibold rounded-full text-primary-800 bg-primary-100 dark:bg-primary-200 dark:text-primary-800 hover:cursor-pointer">
-                                                {count}
-                                            </span>
+                                        <div className="flex justify-content-center items-center">
+                                            <input
+                                                readOnly
+                                                type="radio"
+                                                className="accent-pink-500 h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500 hover:cursor-pointer"
+                                                checked={selectedDepartment === departmentName}
+                                                onChange={() => null} 
+                                            />
+                                        <label
+                                            htmlFor={departmentName}
+                                            className="ml-3 text-gray-700 flex items-center hover:cursor-pointer"
+                                        >
+                                            {departmentName}
+                                        </label>
                                         </div>
-                                    ));
-                                })()}
+
+                                        <span className="inline-flex justify-center items-center w-5 h-5 text-xs font-semibold rounded-full text-primary-800 bg-primary-100 dark:bg-primary-200 dark:text-primary-800 hover:cursor-pointer">
+                                            {count}
+                                        </span>
+                                    </div>
+                                ))}
                             </div>
                         </details>
 
