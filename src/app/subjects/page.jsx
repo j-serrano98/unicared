@@ -1,4 +1,4 @@
-import GoBackButton from "../(pages)/components/GoBackButton";
+import GoBackButton from "../components/GoBackButton";
 
 const SubjectsPage = () => {
   return (
