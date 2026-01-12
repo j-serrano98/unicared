@@ -4,16 +4,24 @@ import Card from "./Card"
 import Dropdown from "./Dropdown"
 import React, { useState, useEffect, useMemo } from "react"
 
+const sortingOptions = [
+    {value: "mp", option: "Most popular"},
+    {value: "lp", option: "Less popular"},
+    {value: "na", option: "Name (Ascending)"},
+    {value: "nd", option: "Name (Descending)"},
+]
+
 export default function TeachersList({ teachers }) {
     
 
      /* ============================
-     FILTER STATE (SOURCE OF TRUTH)
+     FILTER AND SORT STATE (SOURCE OF TRUTH)
     ============================ */
     const [selectedRating, setSelectedRating] = useState(null)
     const [selectedSubject, setSelectedSubject] = useState('')
     const [selectedDepartment, setSelectedDepartment] = useState('')
     const [keywordFilter, setKeywordFilter] = useState('')
+    const [sortingOrder, setSortingOrder] = useState('mp')
 
     
     /* ============================
@@ -77,9 +85,8 @@ export default function TeachersList({ teachers }) {
         return Object.entries(map);
     }, [teachers]);
 
-
     const filteredTeachers = useMemo(() => {
-        let result = teachers;
+        let result = [...teachers];
 
         if (selectedRating) {
             result =  result.filter(
@@ -108,13 +115,29 @@ export default function TeachersList({ teachers }) {
             );
         }
 
+        switch (sortingOrder) {
+            case 'mp':
+                result.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+                break;
+            case 'lp':
+                result.sort((a, b) => (a.rating ?? 0) - (b.rating ?? 0));
+                break;
+            case 'na':
+                result.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case 'nd':
+                result.sort((a, b) => b.name.localeCompare(a.name));
+                break;
+        }
+
         return result;
     }, [
         teachers,
         selectedDepartment,
         selectedSubject,
         selectedRating,
-        keywordFilter
+        keywordFilter,
+        sortingOrder
     ])
 
 
@@ -125,6 +148,10 @@ export default function TeachersList({ teachers }) {
     function handleKeywordSearch(e) {
         setKeywordFilter(e.target.value)
     };
+
+    function handleSortingChange(e) {
+        setSortingOrder(e.target.value)
+    }
 
     const clearFilters = () => {
         setSelectedDepartment("");
@@ -303,10 +330,16 @@ export default function TeachersList({ teachers }) {
             <div className="flex justify-between items-center mb-4">
                 <h1>Resultados:</h1>
                 <div className="flex gap-4  justify-content-center">
-                    <div className="flex items-center">
+                    {/* <div className="flex items-center">
                         <h1>Ordenar</h1>
-                    </div>
-                    <Dropdown />
+                    </div> */}
+                    {/* <Dropdown /> */}
+                    <label for="sorting-options" class="block mb-2.5 text-sm font-medium text-heading">Order by</label>
+                    <select value={sortingOrder} onChange={handleSortingChange} id="sorting-options" class="block w-full px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body">
+                        {sortingOptions.map((s, i) => (
+                            <option key={i}  value={s.value}>{s.option}</option>
+                        ))}
+                    </select>
                 </div>
             </div>
             
