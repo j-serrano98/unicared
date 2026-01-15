@@ -10,7 +10,7 @@ export default function Navbar({ isAuthenticated, profile }) {
                 {/* Website Logo */}
                 <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
                     {/* <img src={logo} className="h-15" alt="Profe-Radar Logo" /> */}
-                    <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Teacher-Radar</span>
+                    <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Unica<span className="text-red-500">Red</span></span>
                 </a>
                                         
                 {/* Right Side Buttons: Login, Logout, Menu Toggle, Profile*/}
